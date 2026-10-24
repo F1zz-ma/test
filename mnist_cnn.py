@@ -1,5 +1,4 @@
 import os
-
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -11,25 +10,25 @@ class CNNMnist(nn.Module):
     def __init__(self):
         super().__init__()
         self.features = nn.Sequential(
-            nn.Conv2d(1, 32, kernel_size=3, padding=1),
+            nn.Conv2d(1, 32, kernel_size=3,stride=1, padding=1),
             nn.ReLU(),
-            nn.Conv2d(32, 32, kernel_size=3, padding=1),
+            nn.Conv2d(32, 64, kernel_size=3,stride=1, padding=1),
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2),
+            nn.MaxPool2d(kernel_size=2,stride=2),
 
-            nn.Conv2d(32, 64, kernel_size=3, padding=1),
+            nn.Conv2d(64, 128, kernel_size=3,stride=1, padding=1),
             nn.ReLU(),
-            nn.Conv2d(64, 64, kernel_size=3, padding=1),
+            nn.Conv2d(128, 256, kernel_size=3,stride=1, padding=1),
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2),
+            nn.MaxPool2d(kernel_size=2,stride=2),
         )
 
         self.classifier = nn.Sequential(
             nn.Flatten(),
-            nn.Linear(64 * 7 * 7, 128),
+            nn.Linear(256 * 7 * 7, 512),
             nn.ReLU(),
             nn.Dropout(0.5),
-            nn.Linear(128, 10),
+            nn.Linear(512, 10),
         )
 
     def forward(self, x):
@@ -132,7 +131,7 @@ def main():
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=1e-3)
 
-    epochs = 5
+    epochs = 10
     for epoch in range(1, epochs + 1):
         train_loss, train_acc = train_one_epoch(model, train_loader, criterion, optimizer, device)
         val_loss, val_acc = evaluate(model, test_loader, criterion, device)
